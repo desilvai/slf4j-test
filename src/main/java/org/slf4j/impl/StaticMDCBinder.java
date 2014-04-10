@@ -4,20 +4,28 @@ import org.slf4j.spi.MDCAdapter;
 
 import uk.org.lidalia.slf4jtest.TestMDCAdapter;
 
-public final class StaticMDCBinder {
+
+public final class StaticMDCBinder
+{
 
     public static final org.slf4j.impl.StaticMDCBinder SINGLETON = new org.slf4j.impl.StaticMDCBinder();
 
     private final TestMDCAdapter testMDCAdapter = new TestMDCAdapter();
 
-    private StaticMDCBinder() {
+
+    private StaticMDCBinder()
+    {
     }
 
-    public MDCAdapter getMDCA() {
+
+    public MDCAdapter getMDCA()
+    {
         return testMDCAdapter;
     }
 
-    public String getMDCAdapterClassStr() {
+
+    public String getMDCAdapterClassStr()
+    {
         return TestMDCAdapter.class.getName();
     }
 }

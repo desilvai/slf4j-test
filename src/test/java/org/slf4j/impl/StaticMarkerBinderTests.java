@@ -4,12 +4,11 @@ import org.junit.Test;
 import org.slf4j.MarkerFactory;
 import org.slf4j.helpers.BasicMarkerFactory;
 
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 
-public class StaticMarkerBinderTests {
+public class StaticMarkerBinderTests 
+{
 
     @Test
     public void getMarkerFactory() throws Exception {
@@ -24,6 +23,6 @@ public class StaticMarkerBinderTests {
 
     @Test
     public void getMarkerFactoryReturnsCorrectlyFromSlf4JLoggerFactory() {
-        assertThat(MarkerFactory.getIMarkerFactory(), is(StaticMarkerBinder.SINGLETON.getMarkerFactory()));
+        assertEquals(StaticMarkerBinder.SINGLETON.getMarkerFactory(), MarkerFactory.getIMarkerFactory());
     }
 }
