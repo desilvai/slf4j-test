@@ -29,8 +29,6 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -775,7 +773,7 @@ public class TestLoggerTests {
 
         testLogger.info(message);
 
-        assertThat(systemOutputRule.getSystemOut(), isEmptyString());
+        assertTrue(systemOutputRule.getSystemOut().length() == 0);
     }
 
     @Test
@@ -785,7 +783,8 @@ public class TestLoggerTests {
 
         testLogger.info(message);
 
-        assertThat(testLogger.getLoggingEvents(), is(asList(info(ImmutableMap.of("key", "null"), message))));
+        assertEquals(asList(info(ImmutableMap.of("key", "null"), message)), 
+                     testLogger.getLoggingEvents());
     }
 
     private void assertEnabledReturnsCorrectly(Level levelToTest) {

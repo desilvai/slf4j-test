@@ -6,20 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import uk.org.lidalia.slf4jext.Level;
-
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -69,16 +65,16 @@ public class TestLoggerFactoryTests {
     public void clear() throws Exception {
         TestLogger logger1 = getInstance().getLogger("name1");
         logger1.trace("hello");
-        assertThat(logger1.getLoggingEvents().size(), is(1));
+        Assert.assertTrue(logger1.getLoggingEvents().size() == 1);
         TestLogger logger2 = getInstance().getLogger("name2");
         logger2.trace("world");
-        assertThat(logger2.getLoggingEvents().size(), is(1));
+        Assert.assertTrue(logger2.getLoggingEvents().size() == 1);
 
         TestLoggerFactory.clear();
 
-        assertThat(logger1.getLoggingEvents(), is(empty()));
-        assertThat(logger2.getLoggingEvents(), is(empty()));
-        assertThat(TestLoggerFactory.getLoggingEvents(), is(empty()));
+        Assert.assertTrue(logger1.getLoggingEvents().size() == 0);
+        Assert.assertTrue(logger2.getLoggingEvents().size() == 0);
+        Assert.assertTrue(TestLoggerFactory.getLoggingEvents().size() == 0);
     }
 
     @Test
@@ -90,12 +86,11 @@ public class TestLoggerFactoryTests {
         logger1.trace("here");
         logger2.trace("I am");
 
-        assertThat(TestLoggerFactory.getLoggingEvents(),
-                is(asList(
-                        trace("hello"),
-                        trace("world"),
-                        trace("here"),
-                        trace("I am"))));
+        Assert.assertEquals(asList(trace("hello"),
+                                   trace("world"),
+                                   trace("here"),
+                                   trace("I am")), 
+                            TestLoggerFactory.getLoggingEvents());
     }
 
     @Test
@@ -105,14 +100,8 @@ public class TestLoggerFactoryTests {
         logger1.trace("hello");
         logger2.trace("world");
 
-        assertThat(logger1.getLoggingEvents(),
-                is(asList(
-                        trace("hello"))
-                ));
-        assertThat(logger2.getLoggingEvents(),
-                is(asList(
-                        trace("world"))
-                ));
+        Assert.assertEquals(asList(trace("hello")), logger1.getLoggingEvents());
+        Assert.assertEquals(asList(trace("world")), logger2.getLoggingEvents());
     }
 
     @Test
@@ -121,7 +110,7 @@ public class TestLoggerFactoryTests {
         logger.setEnabledLevels(WARN);
         logger.info("hello");
 
-        assertThat(TestLoggerFactory.getLoggingEvents(), is(empty()));
+        Assert.assertTrue(TestLoggerFactory.getLoggingEvents().size() == 0);
     }
 
     @Test
@@ -131,7 +120,7 @@ public class TestLoggerFactoryTests {
         Map<String, TestLogger> expected = new HashMap<String, TestLogger>();
         expected.put("name1", logger1);
         expected.put("name2", logger2);
-        assertThat(TestLoggerFactory.getAllTestLoggers(), is(expected));
+        Assert.assertEquals(expected, TestLoggerFactory.getAllTestLoggers());
     }
 
     @Test
@@ -141,7 +130,7 @@ public class TestLoggerFactoryTests {
 
         Map<String, TestLogger> expected = new HashMap<String, TestLogger>();
         expected.put("name1", logger1);
-        assertThat(TestLoggerFactory.getAllTestLoggers(), is(expected));
+        Assert.assertEquals(expected, TestLoggerFactory.getAllTestLoggers());
     }
 
     @Test
@@ -151,7 +140,7 @@ public class TestLoggerFactoryTests {
         TestLoggerFactory.reset();
 
         final Map<String, TestLogger> emptyMap = Collections.emptyMap();
-        assertThat(TestLoggerFactory.getAllTestLoggers(), is(emptyMap));
+        Assert.assertEquals(emptyMap, TestLoggerFactory.getAllTestLoggers());
     }
 
     @Test
@@ -160,7 +149,6 @@ public class TestLoggerFactoryTests {
 
         TestLoggerFactory.reset();
 
-        assertThat(TestLoggerFactory.getLoggingEvents(), is(empty()));
     }
 
     @Test
@@ -168,7 +156,7 @@ public class TestLoggerFactoryTests {
         getInstance().getLogger("name1").debug("hello");
         List<LoggingEvent> loggingEvents = TestLoggerFactory.getLoggingEvents();
         getInstance().getLogger("name1").info("world");
-        assertThat(loggingEvents, is(asList(debug("hello"))));
+        Assert.assertEquals(asList(debug("hello")), loggingEvents);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -185,7 +173,7 @@ public class TestLoggerFactoryTests {
 
         Map<String, TestLogger> expected = new HashMap<String, TestLogger>();
         expected.put("name1", logger1);
-        assertThat(allTestLoggers, is(expected));
+        Assert.assertEquals(expected, allTestLoggers);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -204,7 +192,7 @@ public class TestLoggerFactoryTests {
         });
         t.start();
         t.join();
-        assertThat(TestLoggerFactory.getLoggingEvents(), is(empty()));
+        Assert.assertTrue(TestLoggerFactory.getLoggingEvents().size() == 0);
     }
 
     @Test
@@ -218,7 +206,9 @@ public class TestLoggerFactoryTests {
         t.start();
         t.join();
         TestLoggerFactory.getTestLogger("name1").info("message2");
-        assertThat(TestLoggerFactory.getAllLoggingEvents(), is(asList(info("message1"), info("message2"))));
+        Assert.assertEquals(asList(info("message1"), 
+                                   info("message2")), 
+                            TestLoggerFactory.getAllLoggingEvents());
     }
 
     @Test
@@ -233,7 +223,7 @@ public class TestLoggerFactoryTests {
         t.start();
         t.join();
         TestLoggerFactory.clear();
-        assertThat(TestLoggerFactory.getAllLoggingEvents(), is(asList(info("hello"))));
+        Assert.assertEquals(asList(info("hello")), TestLoggerFactory.getAllLoggingEvents());
     }
 
     @Test
@@ -252,17 +242,17 @@ public class TestLoggerFactoryTests {
         });
         t.start();
         t.join();
-        assertThat(TestLoggerFactory.getLoggingEvents(), is(empty()));
-        assertThat(TestLoggerFactory.getAllLoggingEvents(), is(empty()));
-        assertThat(logger1.getLoggingEvents(), is(empty()));
-        assertThat(logger1.getAllLoggingEvents(), is(empty()));
-        assertThat(logger2.getLoggingEvents(), is(empty()));
-        assertThat(logger2.getAllLoggingEvents(), is(empty()));
+        Assert.assertTrue(TestLoggerFactory.getLoggingEvents().size() == 0);
+        Assert.assertTrue(TestLoggerFactory.getAllLoggingEvents().size() == 0);
+        Assert.assertTrue(logger1.getLoggingEvents().size() == 0);
+        Assert.assertTrue(logger1.getAllLoggingEvents().size() == 0);
+        Assert.assertTrue(logger2.getLoggingEvents().size() == 0);
+        Assert.assertTrue(logger2.getAllLoggingEvents().size() == 0);
     }
 
     @Test
     public void defaultPrintLevelIsOff() {
-        assertThat(TestLoggerFactory.getInstance().getPrintLevel(), is(Level.OFF));
+        Assert.assertEquals(Level.OFF, TestLoggerFactory.getInstance().getPrintLevel());
     }
 
     @Test
@@ -272,7 +262,7 @@ public class TestLoggerFactoryTests {
         whenNew(OverridableProperties.class).withArguments("slf4jtest").thenReturn(properties);
         when(properties.getProperty("print.level", "OFF")).thenReturn("INFO");
 
-        assertThat(TestLoggerFactory.getInstance().getPrintLevel(), is(Level.INFO));
+        Assert.assertEquals(Level.INFO, TestLoggerFactory.getInstance().getPrintLevel());
     }
 
     @Test
@@ -289,12 +279,14 @@ public class TestLoggerFactoryTests {
                 TestLoggerFactory.getInstance();
             }
         });
-        assertThat(illegalStateException.getMessage(),
-                is("Invalid level name in property print.level of file slf4jtest.properties " +
-                        "or System property slf4jtest.print.level"));
-        assertThat(illegalStateException.getCause(), instanceOf(IllegalArgumentException.class));
-        assertThat(illegalStateException.getCause().getMessage(),
-                is("No enum constant "+Level.class.getName()+"."+invalidLevelName));
+        Assert.assertEquals("Invalid level name in property print.level of "
+                                + "file slf4jtest.properties or System property"
+                                + " slf4jtest.print.level",
+                            illegalStateException.getMessage());
+        Assert.assertTrue(illegalStateException.getCause() instanceof IllegalArgumentException);
+        Assert.assertEquals("No enum constant " + Level.class.getName() 
+                                + "."+ invalidLevelName,
+                            illegalStateException.getCause().getMessage());
 
     }
 
@@ -302,7 +294,7 @@ public class TestLoggerFactoryTests {
     public void setLevel() {
         for (Level printLevel: Level.values()) {
             TestLoggerFactory.getInstance().setPrintLevel(printLevel);
-            assertThat(TestLoggerFactory.getInstance().getPrintLevel(), is(printLevel));
+            Assert.assertEquals(printLevel, TestLoggerFactory.getInstance().getPrintLevel());
         }
     }
 
